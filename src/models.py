@@ -31,6 +31,9 @@ class Favorites(db.Model):
 
     planet_id: Mapped[int] = mapped_column(ForeignKey("planets.id"))
     fav_planet: Mapped["Planets"] = relationship(back_populates="favorites")
+
+    starship_id: Mapped[int] = mapped_column(ForeignKey("starship.id"))
+    fav_planet: Mapped["Starship"] = relationship(back_populates="favorites")
     
 
     def serialize(self):
@@ -38,7 +41,9 @@ class Favorites(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "character_id": self.character_id,
-            "planet_id": self.planet_id
+            "planet_id": self.planet_id,
+            "starship_id": self.starship_id
+            
         }
 
 class Characters(db.Model):
@@ -72,4 +77,21 @@ class Planets(db.Model):
             "name": self.name,
             "climate": self.climate,
             "terrian": self.terrian
-        }        
+        }  
+
+class Starship(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
+    passenger: Mapped[str] = mapped_column(String(60),nullable=False)
+    pilot: Mapped[str] = mapped_column(String(60), nullable=False)
+    favorites: Mapped[list["Favorites"]] = relationship(back_populates="fav_starship")
+
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "passenger": self.passenger,
+            "pilot": self.pilot
+        }              
